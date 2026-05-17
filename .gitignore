@@ -1,0 +1,18 @@
+# Dependencias de Node
+backend/node_modules/
+pnpm-debug.log*
+
+# Variables de entorno con credenciales secretas
+backend/.env
+
+# carpetas de base de datos y archivos binarios de Docker
+database/
+data/
+mariadb_data/
+
+# Respaldos o backups generados dinámicamente
+*.sql
+
+# Archivos temporales del sistema o editores
+.DS_Store
+.vscode/

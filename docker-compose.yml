@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.4
+    container_name: mariadb_municipalidad
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_seguro
+      MYSQL_DATABASE: municipalidad_yau
+      MYSQL_USER: user_backend
+      MYSQL_PASSWORD: password_backend_123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      # Volumen para que tus datos de prueba no se borren al apagar el contenedor
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
