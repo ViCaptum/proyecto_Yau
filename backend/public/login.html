@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipalidad de Yau — Iniciar Sesión</title>
+    <meta name="description" content="Sistema de Gestión de Trámites de la Municipalidad Distrital de Yau">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md">
+        <!-- Logo / Branding -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-700 rounded-2xl shadow-lg mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800">Municipalidad de Yau</h1>
+            <p class="text-slate-500 text-sm mt-1">Sistema de Gestión de Trámites</p>
+        </div>
+
+        <!-- Card de Login -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+            <h2 class="text-lg font-semibold text-slate-800 mb-6">Iniciar Sesión</h2>
+
+            <form id="form-login" class="space-y-5" novalidate>
+                <!-- Email -->
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-slate-700 mb-1.5">
+                        Correo Institucional
+                    </label>
+                    <input
+                        id="login-email"
+                        type="email"
+                        placeholder="usuario@yau.gob.pe"
+                        autocomplete="email"
+                        class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-400">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-slate-700 mb-1.5">
+                        Contraseña
+                    </label>
+                    <div class="relative">
+                        <input
+                            id="login-password"
+                            type="password"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-400 pr-12">
+                        <button type="button" id="toggle-password"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
+                            <svg id="icon-ojo-abierto" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg id="icon-ojo-cerrado" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div id="login-error"
+                    class="hidden bg-red-50 border border-red-300 text-red-700 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span id="login-error-msg"></span>
+                </div>
+
+                <!-- Botón submit -->
+                <button
+                    id="btn-login"
+                    type="submit"
+                    class="w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+                    <span id="btn-login-texto">Ingresar al Sistema</span>
+                    <svg id="btn-login-spinner" class="hidden animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Hint de credenciales para pruebas -->
+            <div class="mt-6 pt-5 border-t border-slate-100">
+                <p class="text-xs text-slate-400 text-center mb-2">Credenciales de prueba (contraseña: <code class="bg-slate-100 px-1 rounded">123</code>)</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <button data-hint-email="admin@yau.gob.pe"
+                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
+                        Admin
+                    </button>
+                    <button data-hint-email="cruiz@yau.gob.pe"
+                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
+                        Mesa Partes
+                    </button>
+                    <button data-hint-email="lgomez@yau.gob.pe"
+                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
+                        Registrador
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-xs text-slate-400 mt-6">
+            © 2026 Municipalidad Distrital de Yau — Sistema Interno v1.0
+        </p>
+    </div>
+
+    <script type="module">
+        import { authAPI }      from '/js/api.js';
+        import { guardarSesion, getToken } from '/js/auth.js';
+
+        // Si ya hay sesión activa, ir directo al sistema
+        if (getToken()) {
+            window.location.href = '/index.html';
+        }
+
+        const form         = document.getElementById('form-login');
+        const emailInput   = document.getElementById('login-email');
+        const passInput    = document.getElementById('login-password');
+        const errorDiv     = document.getElementById('login-error');
+        const errorMsg     = document.getElementById('login-error-msg');
+        const btn          = document.getElementById('btn-login');
+        const btnTexto     = document.getElementById('btn-login-texto');
+        const btnSpinner   = document.getElementById('btn-login-spinner');
+        const togglePass   = document.getElementById('toggle-password');
+        const iconAbierto  = document.getElementById('icon-ojo-abierto');
+        const iconCerrado  = document.getElementById('icon-ojo-cerrado');
+
+        // Toggle visibilidad contraseña
+        togglePass.addEventListener('click', () => {
+            const esOculto = passInput.type === 'password';
+            passInput.type   = esOculto ? 'text' : 'password';
+            iconAbierto.classList.toggle('hidden', esOculto);
+            iconCerrado.classList.toggle('hidden', !esOculto);
+        });
+
+        // Hints de email para pruebas
+        document.querySelectorAll('.hint-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                emailInput.value = btn.dataset.hintEmail;
+                passInput.value  = '123';
+                passInput.focus();
+            });
+        });
+
+        // Submit del formulario
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const email    = emailInput.value.trim();
+            const password = passInput.value;
+
+            if (!email || !password) {
+                mostrarError('Por favor ingresa tu correo y contraseña.');
+                return;
+            }
+
+            setLoading(true);
+            errorDiv.classList.add('hidden');
+
+            try {
+                const res = await authAPI.login(email, password);
+
+                if (res?.status === 'success') {
+                    guardarSesion(res.data.token, {
+                        ...res.data.usuario,
+                        id_rol: res.data.usuario.id_rol ?? extraerRolDelToken(res.data.token)
+                    });
+                    window.location.href = '/index.html';
+                } else {
+                    mostrarError(res?.message || 'Credenciales incorrectas.');
+                }
+            } catch (err) {
+                mostrarError('No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function mostrarError(msg) {
+            errorMsg.textContent = msg;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function setLoading(estado) {
+            btn.disabled = estado;
+            btnTexto.textContent = estado ? 'Verificando...' : 'Ingresar al Sistema';
+            btnSpinner.classList.toggle('hidden', !estado);
+        }
+
+        // El backend NO devuelve id_rol en el objeto usuario — lo extraemos del JWT
+        function extraerRolDelToken(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.id_rol;
+            } catch { return null; }
+        }
+    </script>
+</body>
+</html>

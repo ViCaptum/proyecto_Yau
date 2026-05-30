@@ -6,7 +6,7 @@ import { successResponse, errorResponse } from '../utils/response.js';
 /**
  * Controller to handle user authentication and login session.
  */
-const login = async (res, req) => {
+const login = async (req, res) => {
     // Nota: El orden estándar de Express es (req, res), 
     // pero manejamos los parámetros según la estructura de tu petición.
     const { email, password } = req.body;
