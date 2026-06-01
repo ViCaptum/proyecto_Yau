@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { successResponse, errorResponse } from '../utils/response.js';
+import { evaluarUrgencia, cargarModelo } from '../ai/aiService.js';
 
 /**
  * Obtiene la bandeja principal de trámites consumiendo la vista maestra.
@@ -13,7 +14,7 @@ const getBandejaTramites = async (req, res) => {
         let query = '';
         let queryParams = [];
 
-        // 🛡️ SI ES CIUDADANO (Rol 4): Filtramos cruzando la vista con su cuenta de usuario por correo
+        // SI ES CIUDADANO (Rol 4): Filtramos cruzando la vista con su cuenta de usuario por correo
         if (id_rol === 4) {
             query = `
                 SELECT v.* 
@@ -24,7 +25,7 @@ const getBandejaTramites = async (req, res) => {
             `;
             queryParams = [id_usuario];
         } 
-        // 🏢 SI ES EMPLEADO / ADMINISTRADOR: Mantiene el acceso total a toda la carga municipal
+        // SI ES EMPLEADO / ADMINISTRADOR: Mantiene el acceso total a toda la carga municipal
         else {
             query = 'SELECT * FROM vista_bandeja_tramites';
         }
@@ -53,7 +54,7 @@ const getMonitorIA = async (req, res) => {
 };
 
 /**
- * Registra un nuevo trámite analizando el asunto con Machine Learning estructural (NLP)
+ * Registra un nuevo trámite analizando el asunto con Machine Learning REAL (TensorFlow.js)
  */
 const crearTramiteConIA = async (req, res) => {
     const { id_tipo_tramite, id_ciudadano, asunto, documentos_adjuntos } = req.body;
@@ -68,18 +69,13 @@ const crearTramiteConIA = async (req, res) => {
     await connection.beginTransaction();
 
     try {
-        // 🤖 PROCESAMIENTO DE LENGUAJE NATURAL (NLP) SIMULADO
-        const asuntoMinuscula = asunto.toLowerCase();
-        let id_urgencia_predicha = 2; // Default: Normal
-        let certeza = 85.50;
-
-        if (asuntoMinuscula.includes('colapso') || asuntoMinuscula.includes('emergencia') || asuntoMinuscula.includes('riesgo')) {
-            id_urgencia_predicha = 1; // Urgente
-            certeza = 97.80;
-        } else if (asuntoMinuscula.includes('duplicado') || asuntoMinuscula.includes('archivo')) {
-            id_urgencia_predicha = 3; // Baja
-            certeza = 91.20;
-        }
+        // PROCESAMIENTO DE LENGUAJE NATURAL REAL (TensorFlow.js)
+        console.log(`Analizando asunto con IA: "${asunto}"`);
+        const resultadoIA = await evaluarUrgencia(asunto);
+        
+        // Mapeo vital: La IA devuelve 0,1,2. Tu BD usa 1,2,3.
+        const id_urgencia_predicha = resultadoIA.clase + 1; 
+        const certeza = parseFloat(resultadoIA.certeza);
 
         // 1. Insertar trámite principal
         const codigo_expediente = `EXP-2026-${Math.floor(1000 + Math.random() * 9000)}`; 
@@ -108,10 +104,10 @@ const crearTramiteConIA = async (req, res) => {
         await connection.execute(
             `INSERT INTO historial_tramites (id_tramite, id_area_asignada, id_estado, id_usuario_responsable, observaciones) 
              VALUES (?, ?, ?, ?, ?)`,
-            [id_nuevo_tramite, id_area_inicial, id_estado_recibido, id_usuario_responsable, 'Expediente aperturado en Mesa de Partes e indexado por el motor de IA.']
+            [id_nuevo_tramite, id_area_inicial, id_estado_recibido, id_usuario_responsable, `Expediente aperturado e indexado por IA con ${certeza}% de certeza.`]
         );
 
-        // 4. Bitácora de predicción para entrenamiento de Machine Learning
+        // 4. Bitácora de predicción para auditoría de Machine Learning
         const features = {
             longitud_asunto: asunto.length,
             tiene_palabras_clave_riesgo: id_urgencia_predicha === 1,

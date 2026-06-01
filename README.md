@@ -1,84 +1,57 @@
-# Municipalidad de Yau — Sistema de Gestión de Trámites
+# 🏛️ SGT-IA: Sistema de Gestión de Trámites Municipales con Triage Inteligente
 
-Sistema integral para la gestión de trámites municipales con clasificación inteligente de urgencia (simulación de IA basada en palabras clave), arquitectura Single Page Application (SPA) y control de acceso basado en roles (RBAC).
+![Node.js](https://img.shields.io/badge/Node.js-v24+-green?logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-Backend-black?logo=express)
+![MariaDB](https://img.shields.io/badge/MariaDB-Database-blue?logo=mariadb)
+![TensorFlow.js](https://img.shields.io/badge/TensorFlow.js-AI_Engine-orange?logo=tensorflow)
+![JavaScript](https://img.shields.io/badge/JavaScript-ESM-yellow?logo=javascript)
 
-## 🚀 Tecnologías Utilizadas
+Plataforma web transaccional diseñada para la **Municipalidad Distrital de Yau**. Integra un motor de Inteligencia Artificial basado en Deep Learning y Procesamiento de Lenguaje Natural (NLP) para clasificar y priorizar automáticamente la urgencia de los expedientes ingresados por los ciudadanos.
 
-- **Frontend:** Vanilla JS, HTML5, Tailwind CSS (vía CDN), Arquitectura SPA (Single Page Application).
-- **Backend:** Node.js, Express, JSON Web Tokens (JWT) para autenticación, Bcrypt para hashing de contraseñas.
-- **Base de Datos:** MariaDB 10.4.
-- **Infraestructura:** Docker y Docker Compose (con soporte para perfiles).
+---
 
-## 📂 Estructura del Proyecto
+## Características Principales
 
-```text
-proyecto_Yau/
-├── backend/                # Código fuente del servidor Node.js
-│   ├── public/             # Frontend estático (SPA servida por Express)
-│   ├── src/                # Controladores, rutas y lógica de negocio
-│   ├── package.json        # Dependencias de Node (pnpm)
-│   └── Dockerfile          # Instrucciones para dockerizar el backend
-├── DataBase/
-│   └── db.sql              # Esquema de la base de datos y datos semilla (creación de tablas, usuarios)
-└── docker-compose.yml      # Orquestación de contenedores (MariaDB y Backend)
-```
+* **Triage Inteligente (IA):** Análisis semántico del asunto del trámite en tiempo real para determinar su prioridad (`0: Urgente`, `1: Normal`, `2: Baja`).
+* **Seguridad y Autenticación:** Sistema de login cifrado (`bcrypt`) y manejo de sesiones seguras mediante JSON Web Tokens (JWT) bajo una arquitectura RBAC (Control de Acceso Basado en Roles).
+* **Transacciones ACID:** Registro estructurado de expedientes, anexos y bitácora de auditoría mediante bloques transaccionales SQL (`BEGIN`, `COMMIT`, `ROLLBACK`) para garantizar la integridad de los datos.
+* **Modelo IA Resiliente:** Integración nativa de TensorFlow.js puro sin dependencias de C++, incluyendo un *Custom IO Handler* que parchea en memoria discrepancias de Keras 3 y previene desbordamientos de vocabulario.
 
-## ⚙️ Guía de Ejecución
+---
 
-El proyecto está diseñado para ejecutarse en dos modalidades diferentes según tus necesidades:
+## 🛠️ Stack Tecnológico
 
-### Modalidad 1: Desarrollo Local (Recomendado para programar)
-En esta modalidad, la base de datos se ejecuta en Docker, pero el backend se ejecuta localmente usando `pnpm`. Esto permite recarga automática en caliente (hot-reload) de los archivos JS.
+**Frontend:**
+* HTML5, Vanilla JavaScript (ES6 Modules)
+* Tailwind CSS para diseño responsivo e interfaces dinámicas.
 
-1. **Levantar solo la base de datos:**
-   ```bash
-   docker compose up -d
-   ```
-2. **Iniciar el servidor backend (en otra terminal):**
-   ```bash
-   cd backend
-   pnpm install
-   pnpm run dev
-   ```
-3. **Acceder al sistema:**
-   Abre tu navegador en `http://localhost:3000`
+**Backend:**
+* Node.js (v24) + Express.js
+* `@tensorflow/tfjs` (Inferencia IA offline)
+* `jsonwebtoken` & `bcrypt` (Seguridad)
 
-### Modalidad 2: Fullstack Dockerizado (Para pruebas finales o despliegue)
-En esta modalidad, **tanto la base de datos como el backend** se ejecutan dentro de contenedores Docker.
+**Base de Datos:**
+* MariaDB + `mysql2/promise` (Pool de conexiones asíncronas)
 
-1. **Levantar todos los servicios:**
-   ```bash
-   docker compose --profile fullstack up -d --build
-   ```
-   *(El flag `--build` asegura que se compile cualquier cambio reciente en tu código).*
+---
 
-2. **Acceder al sistema:**
-   Abre tu navegador en `http://localhost:3000`
+## ⚙️ Estructura del Motor de Inteligencia Artificial
 
-3. **Para detener los contenedores:**
-   ```bash
-   docker compose --profile fullstack down
-   ```
+El modelo fue entrenado previamente en Python (TensorFlow/Keras) utilizando un dataset sintético municipal y exportado a formato web.
+* **Arquitectura:** Red Neuronal Secuencial (Embedding -> GlobalAveragePooling1D -> Dense ReLU -> Dropout 0.5 -> Softmax).
+* **Procesamiento NLP:** Límite de vocabulario estricto (250 palabras) y longitud de tensor estandarizada a 30 dimensiones con padding.
+* **Despliegue:** Carga asíncrona local de pesos binarios (`.bin`) y topología (`model.json`), garantizando latencia cero sin requerir peticiones a APIs externas.
 
-*Nota: Si necesitas resetear la base de datos a su estado original (borrar todos los registros creados y volver a cargar el archivo `db.sql`), ejecuta: `docker compose down -v`*
+---
 
-## 🔑 Credenciales de Prueba
+## Instalación y Despliegue Local
 
-El sistema incluye 3 usuarios preconfigurados en la base de datos. Todos usan la misma contraseña.
+### 1. Requisitos Previos
+* Node.js v24 o superior.
+* `pnpm` instalado (`npm install -g pnpm`).
+* Servidor MariaDB / MySQL en ejecución.
 
-**Contraseña para todos los usuarios:** `123`
-
-| Rol | Correo Electrónico | Nivel de Acceso |
-|---|---|---|
-| **Administrador** | `admin@yau.gob.pe` | Acceso total (incluye panel de gestión de empleados) |
-| **Mesa de Partes** | `cruiz@yau.gob.pe` | Registro de ciudadanos, recepción de nuevos trámites |
-| **Registrador Técnico**| `lgomez@yau.gob.pe` | Visualización de bandeja, pero permisos limitados |
-
-> **Tip:** En la pantalla de Login, existen botones de acceso rápido (hints) en la parte inferior para autocompletar estas credenciales sin necesidad de escribirlas.
-
-## 🤖 Sistema de Clasificación IA (Simulada)
-
-El sistema analiza el `asunto` del trámite registrado. Si detecta palabras clave críticas como:
-- **colapso**, **emergencia**, **riesgo**, **derrumbe**, **peligro**, **inundación**, **accidente**
-
-Clasificará automáticamente el trámite como **Urgente** (🔴). De lo contrario, lo clasificará como **Normal** (🟡). Esta clasificación se refleja inmediatamente en la Bandeja y en el Monitor IA.
+### 2. Clonar el repositorio
+```bash
+git clone [https://github.com/](https://github.com/)<TU_USUARIO>/<TU_REPOSITORIO>.git
+cd <TU_REPOSITORIO>/backend
