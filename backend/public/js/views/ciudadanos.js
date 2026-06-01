@@ -1,6 +1,6 @@
 /**
  * ciudadanos.js — Vista de gestión de ciudadanos.
- * Lista con modal para crear y editar.
+ * Versión Dark & Gold Premium con modal de cristal y efectos de elevación.
  */
 
 import { ciudadanosAPI } from '../api.js';
@@ -14,36 +14,38 @@ export async function renderCiudadanos() {
     ciudadanosData = res?.data || [];
 
     content.innerHTML = `
-        <div class="space-y-4">
-            <!-- Header -->
-            <div class="flex items-center justify-between">
+        <div class="space-y-6 bg-[#0B132B] p-6 rounded-3xl border border-[#1C2541] shadow-2xl min-h-full animate__animated animate__fadeIn">
+            
+            <!-- Header con Botón de Acción Dorado -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#1C2541] pb-5">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800">Ciudadanos</h1>
-                    <p class="text-slate-500 text-sm mt-1">${ciudadanosData.length} ciudadano(s) registrados</p>
+                    <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+                        <i class="fa-solid fa-users text-[#E5C158] bg-[#E5C158]/10 p-2.5 rounded-xl border border-[#E5C158]/20 shadow-[0_0_10px_rgba(229,193,88,0.1)]"></i>
+                        Ciudadanos
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Directorio de <span class="font-semibold text-[#E5C158]">${ciudadanosData.length}</span> contribuyente(s) registrados en la jurisdicción</p>
                 </div>
                 <button id="btn-nuevo-ciudadano"
-                    class="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+                    class="flex items-center justify-center gap-2 bg-gradient-to-r from-[#E5C158] to-[#C29E37] hover:from-[#F3E5AB] hover:to-[#E5C158] text-[#070D1E] text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 tracking-wide flex-shrink-0">
+                    <i class="fa-solid fa-user-plus text-sm"></i>
                     Nuevo Ciudadano
                 </button>
             </div>
 
-            <!-- Tabla -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <!-- Tabla de Datos Estilo Neo-Premium -->
+            <div class="bg-[#111A36] rounded-2xl border border-[#1C2541] shadow-xl overflow-hidden animate__animated animate__fadeInUp">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wide">
+                    <table class="w-full text-sm text-left align-middle">
+                        <thead class="bg-[#0B132B]/60 text-slate-400 uppercase text-xs tracking-wider border-b border-[#1C2541]">
                             <tr>
-                                <th class="px-5 py-3 text-left">Ciudadano</th>
-                                <th class="px-5 py-3 text-left">Documento</th>
-                                <th class="px-5 py-3 text-left">Contacto</th>
-                                <th class="px-5 py-3 text-left">Dirección</th>
-                                <th class="px-5 py-3 text-center">Acción</th>
+                                <th class="px-5 py-4 font-semibold text-[#E5C158]/80">Ciudadano / Contribuyente</th>
+                                <th class="px-5 py-4 font-semibold">Documento de Identidad</th>
+                                <th class="px-5 py-4 font-semibold">Canal de Contacto</th>
+                                <th class="px-5 py-4 font-semibold">Dirección Residencial</th>
+                                <th class="px-5 py-4 font-semibold text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-ciudadanos" class="divide-y divide-slate-100">
+                        <tbody id="tbody-ciudadanos" class="divide-y divide-[#1C2541]">
                             ${renderFilasCiudadanos(ciudadanosData)}
                         </tbody>
                     </table>
@@ -51,70 +53,90 @@ export async function renderCiudadanos() {
             </div>
         </div>
 
-        <!-- Modal ciudadano -->
-        <div id="modal-ciudadano" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-                    <h3 id="modal-ciudadano-titulo" class="text-base font-semibold text-slate-800">Nuevo Ciudadano</h3>
-                    <button id="cerrar-modal-ciudadano" class="text-slate-400 hover:text-slate-700 text-lg leading-none">✕</button>
+        <!-- Ventana Modal de Cristal Premium (Fondo Oscuro + Desenfoque de Vidrio) -->
+        <div id="modal-ciudadano" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden transition-all duration-300">
+            <div class="bg-[#111A36] border border-[#1C2541] rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300 id="modal-box"">
+                
+                <!-- Encabezado del Modal -->
+                <div class="flex items-center justify-between px-6 py-4 border-b border-[#1C2541] bg-[#152244]">
+                    <h3 id="modal-ciudadano-titulo" class="text-base font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen text-[#E5C158]"></i> Nuevo Ciudadano
+                    </h3>
+                    <button id="cerrar-modal-ciudadano" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-[#1C2541] transition-all"><i class="fa-solid fa-xmark"></i></button>
                 </div>
+                
+                <!-- Cuerpo del Formulario Dark -->
                 <form id="form-ciudadano" class="p-6 space-y-4">
                     <input type="hidden" id="ciudadano-id">
-                    <div class="grid grid-cols-2 gap-3">
+                    
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Nombres *</label>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Nombres *</label>
                             <input id="c-nombres" name="nombres" required placeholder="Juan"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                         </div>
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Apellidos *</label>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Apellidos *</label>
                             <input id="c-apellidos" name="apellidos" required placeholder="Pérez"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Tipo Documento *</label>
-                            <select id="c-tipo-doc" name="tipo_documento" required
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="DNI">DNI</option>
-                                <option value="CE">CE</option>
-                                <option value="RUC">RUC</option>
-                            </select>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Tipo Documento *</label>
+                            <div class="relative">
+                                <select id="c-tipo-doc" name="tipo_documento" required
+                                    class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 appearance-none cursor-pointer pr-10 shadow-inner transition-all">
+                                    <option value="DNI" class="bg-[#111A36]">DNI</option>
+                                    <option value="CE" class="bg-[#111A36]">CE</option>
+                                    <option value="RUC" class="bg-[#111A36]">RUC</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] pointer-events-none"></i>
+                            </div>
                         </div>
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Número Documento *</label>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Número Documento *</label>
                             <input id="c-num-doc" name="numero_documento" required placeholder="44556677"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                         </div>
                     </div>
+                    
                     <div>
-                        <label class="text-xs font-medium text-slate-600 mb-1 block">Email *</label>
+                        <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Email Electrónico *</label>
                         <input id="c-email" name="email" type="email" required placeholder="correo@email.com"
-                            class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Teléfono</label>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Teléfono / Celular</label>
                             <input id="c-telefono" name="telefono" placeholder="999888777"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                         </div>
                         <div>
-                            <label class="text-xs font-medium text-slate-600 mb-1 block">Dirección</label>
+                            <label class="text-xs font-semibold text-slate-400 mb-1.5 block">Dirección Domiciliaria</label>
                             <input id="c-direccion" name="direccion" placeholder="Av. Central 123"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner transition-all">
                         </div>
                     </div>
-                    <div id="error-ciudadano" class="hidden text-red-600 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
+                    
+                    <!-- Notificaciones de Alerta -->
+                    <div id="error-ciudadano" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span id="error-ciudadano-text"></span>
+                    </div>
+                    
+                    <!-- Botón de Envío -->
                     <button type="submit"
-                        class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
-                        Guardar
+                        class="w-full bg-gradient-to-r from-[#E5C158] to-[#C29E37] hover:from-[#F3E5AB] hover:to-[#E5C158] text-[#070D1E] font-bold py-3 rounded-xl transition-all duration-300 text-sm tracking-wide shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Cambios
                     </button>
                 </form>
             </div>
         </div>`;
 
-    // ── Eventos ──
+    // ── Enlace de Eventos del Ciclo de Vida ──
     document.getElementById('btn-nuevo-ciudadano').addEventListener('click', () => abrirModal());
     document.getElementById('cerrar-modal-ciudadano').addEventListener('click', cerrarModal);
     document.getElementById('modal-ciudadano').addEventListener('click', e => {
@@ -122,7 +144,7 @@ export async function renderCiudadanos() {
     });
     document.getElementById('form-ciudadano').addEventListener('submit', guardarCiudadano);
 
-    // Botones de editar en la tabla
+    // Delegación de eventos en la tabla para edición
     document.getElementById('tbody-ciudadanos').addEventListener('click', e => {
         const btn = e.target.closest('[data-editar-ciudadano]');
         if (btn) {
@@ -135,31 +157,43 @@ export async function renderCiudadanos() {
 
 function renderFilasCiudadanos(lista) {
     if (lista.length === 0) {
-        return `<tr><td colspan="5" class="px-6 py-10 text-center text-slate-400">Sin ciudadanos registrados</td></tr>`;
+        return `<tr><td colspan="5" class="px-6 py-16 text-center text-slate-500"><i class="fa-solid fa-address-book text-4xl mb-3 block text-[#1C2541]"></i>Sin registros de ciudadanos actualmente</td></tr>`;
     }
     return lista.map(c => `
-        <tr class="hover:bg-slate-50 transition-colors">
+        <tr class="hover:bg-[#1C2541]/40 border-b border-[#1C2541] last:border-0 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] group cursor-pointer">
             <td class="px-5 py-4">
-                <p class="font-medium text-slate-800">${c.nombres} ${c.apellidos}</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#E5C158]/5 border border-[#E5C158]/20 text-[#E5C158] flex items-center justify-center text-xs font-bold font-mono transition-transform duration-300 group-hover:scale-110">
+                        ${c.nombres[0]}${c.apellidos[0]}
+                    </div>
+                    <p class="font-medium text-slate-200 group-hover:text-[#E5C158] transition-colors">${c.nombres} ${c.apellidos}</p>
+                </div>
             </td>
             <td class="px-5 py-4">
-                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-mono">${c.tipo_documento}</span>
-                <span class="text-slate-700 text-sm ml-1">${c.numero_documento}</span>
+                <span class="text-[11px] font-bold bg-[#61A5FA]/10 text-[#61A5FA] border border-[#61A5FA]/20 px-2 py-0.5 rounded-md font-mono">${c.tipo_documento}</span>
+                <span class="text-slate-300 font-mono text-sm ml-1.5 tracking-wider">${c.numero_documento}</span>
             </td>
             <td class="px-5 py-4">
-                <p class="text-slate-700 text-xs">${c.email}</p>
-                <p class="text-slate-400 text-xs">${c.telefono || '—'}</p>
+                <p class="text-slate-300 text-xs flex items-center gap-1.5"><i class="fa-solid fa-envelope text-slate-500"></i> ${c.email}</p>
+                <p class="text-slate-500 text-xs font-mono mt-1 flex items-center gap-1.5"><i class="fa-solid fa-phone text-slate-600"></i> ${c.telefono || '—'}</p>
             </td>
-            <td class="px-5 py-4 text-slate-600 text-xs">${c.direccion || '—'}</td>
+            <td class="px-5 py-4 text-slate-400 text-xs">
+                <span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-slate-600"></i> ${c.direccion || '—'}</span>
+            </td>
             <td class="px-5 py-4 text-center">
                 <button data-editar-ciudadano="${c.id_ciudadano}"
-                    class="text-blue-600 hover:text-blue-800 text-xs font-semibold hover:underline">Editar</button>
+                    class="inline-flex items-center gap-1.5 bg-[#61A5FA]/5 text-[#61A5FA] border border-[#61A5FA]/20 hover:border-[#E5C158]/50 hover:bg-[#E5C158]/10 hover:text-[#E5C158] text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 shadow-md">
+                    <i class="fa-solid fa-pen-to-square"></i> Editar
+                </button>
             </td>
         </tr>`).join('');
 }
 
 function abrirModal(ciudadano = null) {
-    document.getElementById('modal-ciudadano-titulo').textContent = ciudadano ? 'Editar Ciudadano' : 'Nuevo Ciudadano';
+    document.getElementById('modal-ciudadano-titulo').innerHTML = ciudadano 
+        ? `<i class="fa-solid fa-user-gear text-[#E5C158]"></i> Editar Perfil Contribuyente` 
+        : `<i class="fa-solid fa-user-plus text-[#E5C158]"></i> Registrar Nuevo Ciudadano`;
+        
     document.getElementById('ciudadano-id').value       = ciudadano?.id_ciudadano || '';
     document.getElementById('c-nombres').value          = ciudadano?.nombres || '';
     document.getElementById('c-apellidos').value        = ciudadano?.apellidos || '';
@@ -168,8 +202,11 @@ function abrirModal(ciudadano = null) {
     document.getElementById('c-email').value            = ciudadano?.email || '';
     document.getElementById('c-telefono').value         = ciudadano?.telefono || '';
     document.getElementById('c-direccion').value        = ciudadano?.direccion || '';
+    
     document.getElementById('error-ciudadano').classList.add('hidden');
-    document.getElementById('modal-ciudadano').classList.remove('hidden');
+    
+    const modal = document.getElementById('modal-ciudadano');
+    modal.classList.remove('hidden');
 }
 
 function cerrarModal() {
@@ -196,9 +233,9 @@ async function guardarCiudadano(e) {
 
     if (res?.status === 'success') {
         cerrarModal();
-        renderCiudadanos(); // Recargar la vista
+        renderCiudadanos();
     } else {
-        errDiv.textContent = res?.message || 'Error al guardar';
+        document.getElementById('error-ciudadano-text').textContent = res?.message || 'Error al guardar los datos en la base de datos.';
         errDiv.classList.remove('hidden');
     }
 }

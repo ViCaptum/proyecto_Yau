@@ -1,67 +1,170 @@
+/**
+ * authController.js — Controlador de Seguridad y Autenticación Centralizada.
+ * Maneja el ciclo de login unificado (Muni/Ciudadanos) y autoregistro transaccional.
+ */
+
+import pool from '../config/db.js'; // ◄--- SIN LLAVES, importación por defecto corregida
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import pool from '../config/db.js';
-import { successResponse, errorResponse } from '../utils/response.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'firma_secreta_institucional_yau_2026';
 
 /**
- * Controller to handle user authentication and login session.
+ * 1. LOGIN UNIFICADO (Administradores, Empleados y Ciudadanos)
  */
-const login = async (req, res) => {
-    // Nota: El orden estándar de Express es (req, res), 
-    // pero manejamos los parámetros según la estructura de tu petición.
+export const login = async (req, res) => {
     const { email, password } = req.body;
 
-    // Validación básica de entrada
     if (!email || !password) {
-        return errorResponse(res, 400, 'El correo y la contraseña son obligatorios');
+        return res.status(400).json({
+            status: 'error',
+            message: 'El correo electrónico y la clave de acceso son obligatorios.'
+        });
     }
 
     try {
-        // 1. Buscar al usuario en la base de datos usando el Pool
-        const [rows] = await pool.execute('SELECT * FROM usuarios WHERE email = ? AND estado = 1', [email]);
-        
-        if (rows.length === 0) {
-            return errorResponse(res, 401, 'Credenciales incorrectas o usuario inactivo');
+        const queryUser = `
+            SELECT u.id_usuario, u.id_rol, u.id_area, u.nombres, u.apellidos, u.email, u.password_hash, u.estado, r.nombre_rol
+            FROM usuarios u
+            INNER JOIN roles r ON u.id_rol = r.id_rol
+            WHERE u.email = ? LIMIT 1
+        `;
+        // Usamos el pool directamente
+        const [usuarios] = await pool.query(queryUser, [email.trim()]);
+
+        if (usuarios.length === 0) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Las credenciales introducidas no corresponden a ningún operador registrado.'
+            });
         }
 
-        const usuario = rows[0];
+        const usuario = usuarios[0];
 
-        // 2. Comparar la contraseña ingresada con el hash dinámico de la BD
-        const passwordCorrecto = await bcrypt.compare(password, usuario.password_hash);
-
-        if (!passwordCorrecto) {
-            return errorResponse(res, 401, 'Credenciales incorrectas');
+        if (!usuario.estado) {
+            return res.status(403).json({
+                status: 'error',
+                message: 'Esta cuenta ha sido dada de baja temporalmente.'
+            });
         }
 
-        // 3. Generar el Token JWT firmado si la contraseña coincide (ej: tu semilla '123')
-        const token = jwt.sign(
-            { 
-                id_usuario: usuario.id_usuario, 
-                id_rol: usuario.id_rol, 
-                id_area: usuario.id_area 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
-        );
+        const coinciden = await bcrypt.compare(password, usuario.password_hash);
+        if (!coinciden) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'La clave de seguridad ingresada es incorrecta.'
+            });
+        }
 
-        // Ocultamos el hash antes de enviar los datos del usuario al frontend
-        delete usuario.password_hash;
+        const payload = {
+            id_usuario: usuario.id_usuario,
+            id_rol: usuario.id_rol,
+            id_area: usuario.id_area,
+            email: usuario.email
+        };
 
-        // 4. Enviar respuesta estandarizada exitosa
-        return successResponse(res, 200, 'Inicio de sesión exitoso', {
-            token,
-            usuario: {
-                nombres: usuario.nombres,
-                apellidos: usuario.apellidos,
-                email: usuario.email,
-                id_area: usuario.id_area
+        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Autenticación autorizada con éxito.',
+            data: {
+                token,
+                usuario: {
+                    id_usuario: usuario.id_usuario,
+                    nombres: usuario.nombres,
+                    apellidos: usuario.apellidos,
+                    email: usuario.email,
+                    id_rol: usuario.id_rol,
+                    nombre_rol: usuario.nombre_rol
+                }
             }
         });
 
     } catch (error) {
-        console.error('Error en el proceso de Login:', error);
-        return errorResponse(res, 500, 'Error interno del servidor al procesar el login', error.message);
+        console.error("❌ ERROR EN ENDPOINT LOGIN:", error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Error de comunicación interna en el servidor central.'
+        });
     }
 };
 
-export default { login };
+/**
+ * 2. REGISTRO TRANSACCIONAL DE CIUDADANOS
+ */
+export const registrarCiudadano = async (req, res) => {
+    const { nombres, apellidos, tipo_documento, numero_documento, email, password, telefono, direccion } = req.body;
+
+    if (!nombres || !apellidos || !tipo_documento || !numero_documento || !email || !password) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Todos los campos marcados con asterisco (*) son obligatorios.'
+        });
+    }
+
+    // Pedimos la conexión directa al pool
+    const connection = await pool.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        const [checkUser] = await connection.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email.trim()]);
+        if (checkUser.length > 0) {
+            connection.release();
+            return res.status(400).json({
+                status: 'error',
+                message: 'El correo electrónico ya se encuentra vinculado a otra cuenta activa.'
+            });
+        }
+
+        const [checkDoc] = await connection.query('SELECT id_ciudadano FROM ciudadanos WHERE numero_documento = ?', [numero_documento.trim()]);
+        if (checkDoc.length > 0) {
+            connection.release();
+            return res.status(400).json({
+                status: 'error',
+                message: 'El número de documento ingresado ya se encuentra registrado.'
+            });
+        }
+
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        const sqlUsuario = `
+            INSERT INTO usuarios (id_rol, id_area, nombres, apellidos, email, password_hash, estado)
+            VALUES (4, 1, ?, ?, ?, ?, TRUE)
+        `;
+        await connection.query(sqlUsuario, [nombres.trim(), apellidos.trim(), email.trim(), passwordHash]);
+
+        const sqlCiudadano = `
+            INSERT INTO ciudadanos (tipo_documento, numero_documento, nombres, apellidos, telefono, email, direccion)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        await connection.query(sqlCiudadano, [
+            tipo_documento,
+            numero_documento.trim(),
+            nombres.trim(),
+            apellidos.trim(),
+            telefono ? telefono.trim() : null,
+            email.trim(),
+            direccion ? direccion.trim() : null
+        ]);
+
+        await connection.commit();
+        connection.release();
+
+        return res.status(201).json({
+            status: 'success',
+            message: 'Tu cuenta ciudadana fue procesada y dada de alta con éxito.'
+        });
+
+    } catch (error) {
+        await connection.rollback();
+        connection.release();
+        console.error("❌ ERROR CRÍTICO TRANSACCIONAL:", error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'No se pudo procesar tu alta debido a una inconsistencia técnica interna.'
+        });
+    }
+};

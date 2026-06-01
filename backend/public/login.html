@@ -3,209 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Municipalidad de Yau — Iniciar Sesión</title>
+    <title>Municipalidad de Yau — Portal Digital</title>
     <meta name="description" content="Sistema de Gestión de Trámites de la Municipalidad Distrital de Yau">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        /* Efecto de fulgor radial sutil para el fondo premium */
+        .bg-glow {
+            background: radial-gradient(circle at 50% 30%, #111A36 0%, #070D1E 70%);
+        }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center p-4">
+<body class="min-h-screen bg-glow flex flex-col items-center justify-center p-4 text-slate-100 relative overflow-x-hidden">
 
-    <div class="w-full max-w-md">
-        <!-- Logo / Branding -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-700 rounded-2xl shadow-lg mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
+    <!-- 🔍 BOTÓN INVISIBLE DE ADMIN (Easter Egg en la esquina superior izquierda) -->
+    <button id="secret-admin-trigger"
+    class="absolute top-0 left-0 w-16 h-16 bg-white opacity-0 cursor-default focus:outline-none z-50">
+    </button>
+
+    <div class="w-full max-w-xl animate__animated animate__fadeIn">
+        
+        <!-- ========================================== -->
+        <!-- ENCABEZADO DINÁMICO                        -->
+        <!-- ========================================== -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-[#E5C158]/10 border border-[#E5C158]/30 rounded-2xl shadow-[0_0_20px_rgba(229,193,88,0.15)] mb-4 animate__animated animate__pulse animate__infinite animate__slower">
+                <i id="header-icon" class="fa-solid fa-landmark text-[#E5C158] text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-slate-800">Municipalidad de Yau</h1>
-            <p class="text-slate-500 text-sm mt-1">Sistema de Gestión de Trámites</p>
+            <h1 id="header-title" class="text-2xl font-bold tracking-tight text-white transition-all duration-300">Municipalidad de Yau</h1>
+            <p id="header-subtitle" class="text-slate-400 text-sm mt-1 font-medium transition-all duration-300">Plataforma de Trámites Ciudadanos</p>
         </div>
 
-        <!-- Card de Login -->
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
-            <h2 class="text-lg font-semibold text-slate-800 mb-6">Iniciar Sesión</h2>
+        <!-- ========================================== -->
+        <!-- TARJETA CONTENEDORA PRINCIPAL (CRISTAL)    -->
+        <!-- ========================================== -->
+        <div class="bg-[#111A36] rounded-3xl shadow-2xl border border-[#1C2541] p-8 md:p-10 transition-all duration-300 relative">
+            
+            <!-- ──────── VIEW 1: LOGIN CIUDADANO ──────── -->
+            <div id="view-login-ciudadano" class="space-y-5">
+                <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 border-b border-[#1C2541] pb-3">
+                    <i class="fa-solid fa-users text-[#E5C158] text-sm"></i> Acceso Ciudadano
+                </h2>
 
-            <form id="form-login" class="space-y-5" novalidate>
-                <!-- Email -->
-                <div>
-                    <label for="login-email" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        Correo Institucional
-                    </label>
-                    <input
-                        id="login-email"
-                        type="email"
-                        placeholder="usuario@yau.gob.pe"
-                        autocomplete="email"
-                        class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-400">
+                <form id="form-login-ciudadano" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Correo Electrónico</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-envelope text-slate-500 text-xs"></i>
+                            </div>
+                            <input type="email" required id="citizen-email" placeholder="ejemplo@email.com"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Contraseña</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-slate-500 text-xs"></i>
+                            </div>
+                            <input type="password" required id="citizen-password" placeholder="••••••••"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl pl-10 pr-12 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                            <button type="button" class="toggle-password-btn absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1">
+                                <i class="fa-solid fa-eye text-sm eye-open"></i>
+                                <i class="fa-solid fa-eye-slash text-sm eye-closed hidden"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="error-login-ciudadano" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2 animate__animated animate__headShake">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span class="error-text font-medium"></span>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#E5C158] to-[#C29E37] hover:from-[#F3E5AB] hover:to-[#E5C158] text-[#070D1E] font-bold py-3 rounded-xl transition-all duration-300 text-sm tracking-wide shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        Ingresar a Mis Trámites <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </button>
+                </form>
+
+                <div class="text-center pt-3 border-t border-[#1C2541]">
+                    <p class="text-xs text-slate-400">¿Eres nuevo en la plataforma? <button id="go-to-register" class="text-[#E5C158] font-bold hover:underline ml-1">Regístrate aquí</button></p>
                 </div>
+            </div>
 
-                <!-- Password -->
-                <div>
-                    <label for="login-password" class="block text-sm font-medium text-slate-700 mb-1.5">
-                        Contraseña
-                    </label>
-                    <div class="relative">
-                        <input
-                            id="login-password"
-                            type="password"
-                            placeholder="••••••••"
-                            autocomplete="current-password"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-400 pr-12">
-                        <button type="button" id="toggle-password"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
-                            <svg id="icon-ojo-abierto" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg id="icon-ojo-cerrado" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
-                        </button>
+            <!-- ──────── VIEW 2: REGISTRO CIUDADANO ──────── -->
+            <div id="view-registro-ciudadano" class="space-y-5 hidden">
+                <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 border-b border-[#1C2541] pb-3">
+                    <i class="fa-solid fa-user-plus text-[#E5C158] text-sm"></i> Registro de Nuevo Ciudadano
+                </h2>
+
+                <form id="form-registro-ciudadano" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Nombres *</label>
+                            <input type="text" required name="nombres" placeholder="Juan"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Apellidos *</label>
+                            <input type="text" required name="apellidos" placeholder="Pérez"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tipo Documento *</label>
+                            <div class="relative">
+                                <select required name="tipo_documento"
+                                    class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 appearance-none cursor-pointer pr-10 shadow-inner">
+                                    <option value="DNI" class="bg-[#111A36]">DNI (Persona Natural)</option>
+                                    <option value="RUC" class="bg-[#111A36]">RUC (Persona Jurídica)</option>
+                                    <option value="CE" class="bg-[#111A36]">Carnet de Extranjería</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] pointer-events-none"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Número Documento *</label>
+                            <input type="text" required name="numero_documento" placeholder="44556677"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Email Electrónico *</label>
+                            <input type="email" required name="email" placeholder="correo@ejemplo.com"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Contraseña del Sistema *</label>
+                            <input type="password" required name="password" placeholder="Establezca una contraseña"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Teléfono / Celular</label>
+                            <input type="text" name="telefono" placeholder="999888777"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Dirección Residencial</label>
+                            <input type="text" name="direccion" placeholder="Av. Central 123"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#E5C158]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div id="error-registro-ciudadano" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2 animate__animated animate__headShake">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span class="error-text font-medium"></span>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#E5C158] to-[#C29E37] hover:from-[#F3E5AB] text-[#070D1E] font-bold py-3 rounded-xl transition-all duration-300 text-sm tracking-wide shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-check"></i> Finalizar y Crear Cuenta
+                    </button>
+                </form>
+
+                <div class="text-center pt-3 border-t border-[#1C2541]">
+                    <p class="text-xs text-slate-400">¿Ya posees una cuenta registrada? <button id="back-to-citizen-login" class="text-[#E5C158] font-bold hover:underline ml-1">Inicia sesión aquí</button></p>
+                </div>
+            </div>
+
+            <!-- ──────── VIEW 3: LOGIN INTITUCIONAL (ADMINS) ──────── -->
+            <div id="view-login-admin" class="space-y-5 hidden">
+                <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2 border-b border-[#1C2541] pb-3">
+                    <i class="fa-solid fa-user-shield text-[#61A5FA]"></i> Portal Municipal Interno
+                </h2>
+
+                <form id="form-login-admin" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Firma Digital (Email)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-fingerprint text-[#61A5FA] text-xs"></i>
+                            </div>
+                            <input type="email" required id="admin-email" placeholder="usuario@yau.gob.pe"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl pl-10 pr-4 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#61A5FA]/40 placeholder-slate-600 shadow-inner">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Token de Acceso</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-key text-[#61A5FA] text-xs"></i>
+                            </div>
+                            <input type="password" required id="admin-password" placeholder="••••••••"
+                                class="w-full bg-[#0B132B] border border-[#1C2541] rounded-xl pl-10 pr-12 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#61A5FA]/40 placeholder-slate-600 shadow-inner">
+                            <button type="button" class="toggle-password-btn absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1">
+                                <i class="fa-solid fa-eye text-sm eye-open"></i>
+                                <i class="fa-solid fa-eye-slash text-sm eye-closed hidden"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="error-login-admin" class="hidden bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2 animate__animated animate__headShake">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span class="error-text font-medium"></span>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-[#61A5FA] to-blue-700 hover:from-blue-400 hover:to-[#61A5FA] text-white font-bold py-3 rounded-xl transition-all duration-300 text-sm tracking-wide shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        Autenticar Funcionario <i class="fa-solid fa-shield-halved"></i>
+                    </button>
+                </form>
+
+                <!-- Acceso rápido para desarrollo interno corporativo -->
+                <div class="mt-4 pt-4 border-t border-[#1C2541]">
+                    <p class="text-[11px] text-slate-500 text-center mb-2.5 font-mono">Credenciales semilla activas (pass: 123)[cite: 1]</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" data-hint="admin@yau.gob.pe" class="btn-hint-admin text-[10px] bg-[#0B132B] hover:bg-[#61A5FA]/10 border border-[#1C2541] text-slate-400 hover:text-[#61A5FA] py-1.5 rounded-lg transition-all font-semibold">Admin</button>
+                        <button type="button" data-hint="cruiz@yau.gob.pe" class="btn-hint-admin text-[10px] bg-[#0B132B] hover:bg-[#61A5FA]/10 border border-[#1C2541] text-slate-400 hover:text-[#61A5FA] py-1.5 rounded-lg transition-all font-semibold">Mesa Partes</button>
+                        <button type="button" data-hint="lgomez@yau.gob.pe" class="btn-hint-admin text-[10px] bg-[#0B132B] hover:bg-[#61A5FA]/10 border border-[#1C2541] text-slate-400 hover:text-[#61A5FA] py-1.5 rounded-lg transition-all font-semibold">Registrador</button>
                     </div>
                 </div>
 
-                <!-- Error message -->
-                <div id="login-error"
-                    class="hidden bg-red-50 border border-red-300 text-red-700 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span id="login-error-msg"></span>
-                </div>
-
-                <!-- Botón submit -->
-                <button
-                    id="btn-login"
-                    type="submit"
-                    class="w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
-                    <span id="btn-login-texto">Ingresar al Sistema</span>
-                    <svg id="btn-login-spinner" class="hidden animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                </button>
-            </form>
-
-            <!-- Hint de credenciales para pruebas -->
-            <div class="mt-6 pt-5 border-t border-slate-100">
-                <p class="text-xs text-slate-400 text-center mb-2">Credenciales de prueba (contraseña: <code class="bg-slate-100 px-1 rounded">123</code>)</p>
-                <div class="grid grid-cols-3 gap-2">
-                    <button data-hint-email="admin@yau.gob.pe"
-                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
-                        Admin
-                    </button>
-                    <button data-hint-email="cruiz@yau.gob.pe"
-                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
-                        Mesa Partes
-                    </button>
-                    <button data-hint-email="lgomez@yau.gob.pe"
-                        class="hint-btn text-xs text-center bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-700 px-2 py-1.5 rounded-lg transition-all">
-                        Registrador
-                    </button>
+                <div class="text-center pt-2">
+                    <button id="back-to-citizen-from-admin" class="text-xs text-slate-500 hover:text-slate-300 underline font-medium">Volver a Ventanilla Pública</button>
                 </div>
             </div>
+
         </div>
 
-        <!-- Footer -->
-        <p class="text-center text-xs text-slate-400 mt-6">
+        <p class="text-center text-xs text-slate-600 font-mono mt-6">
             © 2026 Municipalidad Distrital de Yau — Sistema Interno v1.0
         </p>
     </div>
 
+    <!-- ========================================== -->
+    <!-- COMPORTAMIENTO LÓGICO DE TRANSICIONES      -->
+    <!-- ========================================== -->
     <script type="module">
-        import { authAPI }      from '/js/api.js';
+        import { authAPI } from '/js/api.js';
         import { guardarSesion, getToken } from '/js/auth.js';
 
-        // Si ya hay sesión activa, ir directo al sistema
         if (getToken()) {
             window.location.href = '/index.html';
         }
 
-        const form         = document.getElementById('form-login');
-        const emailInput   = document.getElementById('login-email');
-        const passInput    = document.getElementById('login-password');
-        const errorDiv     = document.getElementById('login-error');
-        const errorMsg     = document.getElementById('login-error-msg');
-        const btn          = document.getElementById('btn-login');
-        const btnTexto     = document.getElementById('btn-login-texto');
-        const btnSpinner   = document.getElementById('btn-login-spinner');
-        const togglePass   = document.getElementById('toggle-password');
-        const iconAbierto  = document.getElementById('icon-ojo-abierto');
-        const iconCerrado  = document.getElementById('icon-ojo-cerrado');
+        // 1. MAPEADO DE VISTAS (Corregido según las etiquetas ID del HTML)
+        const viewCitizenLogin = document.getElementById('view-login-ciudadano');
+        const viewCitizenRegister = document.getElementById('view-registro-ciudadano');
+        const viewAdminLogin = document.getElementById('view-login-admin');
 
-        // Toggle visibilidad contraseña
-        togglePass.addEventListener('click', () => {
-            const esOculto = passInput.type === 'password';
-            passInput.type   = esOculto ? 'text' : 'password';
-            iconAbierto.classList.toggle('hidden', esOculto);
-            iconCerrado.classList.toggle('hidden', !esOculto);
-        });
+        // 2. MAPEADO DE TEXTOS DE CABECERA
+        const headerTitle = document.getElementById('header-title');
+        const headerSubtitle = document.getElementById('header-subtitle');
+        const headerIcon = document.getElementById('header-icon');
 
-        // Hints de email para pruebas
-        document.querySelectorAll('.hint-btn').forEach(btn => {
+        // 3. FUNCIÓN DE CAMBIO DE PANTALLA ULTRA-COMPATIBLE
+        function switchView(targetView) {
+            // Ocultamos todas las tarjetas usando la propiedad nativa de Tailwind
+            [viewCitizenLogin, viewCitizenRegister, viewAdminLogin].forEach(v => {
+                if (v) {
+                    v.classList.add('hidden');
+                    v.classList.remove('animate__animated', 'animate__fadeIn', 'animate__fast');
+                }
+            });
+            
+            // Mostramos la tarjeta objetivo quitando el hidden
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                // Agregamos la animación de entrada suave de Animate.css
+                targetView.classList.add('animate__animated', 'animate__fadeIn', 'animate__fast');
+            }
+        }
+
+        // ──────── CONTROLADORES DE INTERFAZ (LISTENERS) ────────
+        
+        // Ejecutar cambio al Login Invisible de Administradores (Easter Egg)
+        const secretBtn = document.getElementById('secret-admin-trigger');
+        if (secretBtn) {
+            secretBtn.addEventListener('click', () => {
+                switchView(viewAdminLogin);
+                if (headerTitle) headerTitle.textContent = "Terminal Municipal Interna";
+                if (headerSubtitle) headerSubtitle.textContent = "Autenticación de Firmas y Servidores Centrales";
+                if (headerIcon) headerIcon.className = "fa-solid fa-server text-[#61A5FA]";
+            });
+        }
+
+        // Ir al Formulario de Registro de Vecinos
+        const btnGoRegister = document.getElementById('go-to-register');
+        if (btnGoRegister) {
+            btnGoRegister.addEventListener('click', () => {
+                switchView(viewCitizenRegister);
+                if (headerSubtitle) headerSubtitle.textContent = "Ficha de Alta Única de Identidad Ciudadana";
+            });
+        }
+
+        // Volver al Login Ciudadano desde Registro
+        const btnBackCitizen = document.getElementById('back-to-citizen-login');
+        if (btnBackCitizen) {
+            btnBackCitizen.addEventListener('click', () => {
+                switchView(viewCitizenLogin);
+                if (headerSubtitle) headerSubtitle.textContent = "Plataforma de Trámites Ciudadanos";
+            });
+        }
+
+        // Volver al Login Ciudadano desde Admin
+        const btnBackFromAdmin = document.getElementById('back-to-citizen-from-admin');
+        if (btnBackFromAdmin) {
+            btnBackFromAdmin.addEventListener('click', () => {
+                switchView(viewCitizenLogin);
+                if (headerTitle) headerTitle.textContent = "Municipalidad de Yau";
+                if (headerSubtitle) headerSubtitle.textContent = "Plataforma de Trámites Ciudadanos";
+                if (headerIcon) headerIcon.className = "fa-solid fa-landmark text-[#E5C158]";
+            });
+        }
+
+        // Visibilidad de contraseñas
+        document.querySelectorAll('.toggle-password-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                emailInput.value = btn.dataset.hintEmail;
-                passInput.value  = '123';
-                passInput.focus();
+                const input = btn.parentElement.querySelector('input');
+                if (input) {
+                    const esOculto = input.type === 'password';
+                    input.type = esOculto ? 'text' : 'password';
+                    btn.querySelector('.eye-open').classList.toggle('hidden', esOculto);
+                    btn.querySelector('.eye-closed').classList.toggle('hidden', !esOculto);
+                }
             });
         });
 
-        // Submit del formulario
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-            const email    = emailInput.value.trim();
-            const password = passInput.value;
-
-            if (!email || !password) {
-                mostrarError('Por favor ingresa tu correo y contraseña.');
-                return;
-            }
-
-            setLoading(true);
-            errorDiv.classList.add('hidden');
-
-            try {
-                const res = await authAPI.login(email, password);
-
-                if (res?.status === 'success') {
-                    guardarSesion(res.data.token, {
-                        ...res.data.usuario,
-                        id_rol: res.data.usuario.id_rol ?? extraerRolDelToken(res.data.token)
-                    });
-                    window.location.href = '/index.html';
-                } else {
-                    mostrarError(res?.message || 'Credenciales incorrectas.');
+        // Carga de Credenciales Semilla Admin
+        document.querySelectorAll('.btn-hint-admin').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const emailInput = document.getElementById('admin-email');
+                const passInput = document.getElementById('admin-password');
+                if (emailInput && passInput) {
+                    emailInput.value = btn.dataset.hint;
+                    passInput.value = '123';
+                    passInput.focus();
                 }
-            } catch (err) {
-                mostrarError('No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.');
-            } finally {
-                setLoading(false);
-            }
+            });
         });
 
-        function mostrarError(msg) {
-            errorMsg.textContent = msg;
-            errorDiv.classList.remove('hidden');
+        // Submit Login Administrador
+        const formAdmin = document.getElementById('form-login-admin');
+        if (formAdmin) {
+            formAdmin.addEventListener('submit', async e => {
+                e.preventDefault();
+                const email = document.getElementById('admin-email').value.trim();
+                const password = document.getElementById('admin-password').value;
+                const errBox = document.getElementById('error-login-admin');
+
+                try {
+                    const res = await authAPI.login(email, password);
+                    if (res?.status === 'success') {
+                        guardarSesion(res.data.token, res.data.usuario);
+                        window.location.href = '/index.html';
+                    } else {
+                        errBox.querySelector('.error-text').textContent = res?.message || 'Firma digital rechazada.';
+                        errBox.classList.remove('hidden');
+                    }
+                } catch {
+                    errBox.querySelector('.error-text').textContent = 'Fallo de enlace con el servidor central.';
+                    errBox.classList.remove('hidden');
+                }
+            });
         }
 
-        function setLoading(estado) {
-            btn.disabled = estado;
-            btnTexto.textContent = estado ? 'Verificando...' : 'Ingresar al Sistema';
-            btnSpinner.classList.toggle('hidden', !estado);
+        // Submit Formulario Registro de Ciudadanos Autónomo
+        const formRegistro = document.getElementById('form-registro-ciudadano');
+        if (formRegistro) {
+            formRegistro.addEventListener('submit', async e => {
+                e.preventDefault();
+                
+                const errBox = document.getElementById('error-registro-custom'); // Caja de error del registro
+                const formData = new FormData(formRegistro);
+                const datos = Object.fromEntries(formData);
+                
+                const btnSubmit = formRegistro.querySelector('button[type="submit"]');
+                const originalText = btnSubmit.innerHTML;
+
+                // Validar que las contraseñas tengan un mínimo de seguridad en cliente
+                if (datos.password.length < 4) {
+                    const errDiv = document.getElementById('error-registro-ciudadano');
+                    errDiv.querySelector('.error-text').textContent = 'La contraseña debe tener al menos 4 caracteres por seguridad.';
+                    errDiv.classList.remove('hidden');
+                    return;
+                }
+
+                try {
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando alta institucional...`;
+
+                    const response = await fetch('/api/auth/registro-ciudadano', { // Ajusta el prefijo de tu API si es necesario (/api/v1, etc)
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(datos)
+                    });
+
+                    const res = await response.json();
+
+                    if (res.status === 'success') {
+                        alert('¡Registro Exitoso! ' + res.message);
+                        formRegistro.reset();
+                        // Redirigir de inmediato al login de ciudadano para que estrene su cuenta
+                        document.getElementById('back-to-citizen-login').click();
+                    } else {
+                        const errDiv = document.getElementById('error-registro-ciudadano');
+                        errDiv.querySelector('.error-text').textContent = res.message || 'Error al procesar la solicitud.';
+                        errDiv.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    const errDiv = document.getElementById('error-registro-ciudadano');
+                    errDiv.querySelector('.error-text').textContent = 'No se pudo conectar con el servidor central.';
+                    errDiv.classList.remove('hidden');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = originalText;
+                }
+            });
         }
 
-        // El backend NO devuelve id_rol en el objeto usuario — lo extraemos del JWT
-        function extraerRolDelToken(token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                return payload.id_rol;
-            } catch { return null; }
+        // Login de Ciudadanos en public/login.html
+        const formLoginCiudadano = document.getElementById('form-login-ciudadano');
+        if (formLoginCiudadano) {
+            formLoginCiudadano.addEventListener('submit', async e => {
+                e.preventDefault();
+                const email = document.getElementById('citizen-email').value.trim();
+                const password = document.getElementById('citizen-password').value;
+                const errBox = document.getElementById('error-login-ciudadano');
+
+                try {
+                    const res = await authAPI.login(email, password);
+                    if (res?.status === 'success') {
+                        // Almacenar token y datos del ciudadano en localStorage
+                        guardarSesion(res.data.token, res.data.usuario);
+                        window.location.href = '/index.html';
+                    } else {
+                        errBox.querySelector('.error-text').textContent = res?.message || 'Acceso denegado.';
+                        errBox.classList.remove('hidden');
+                    }
+                } catch {
+                    errBox.querySelector('.error-text').textContent = 'Fallo de comunicación con la central.';
+                    errBox.classList.remove('hidden');
+                }
+            });
         }
     </script>
 </body>
